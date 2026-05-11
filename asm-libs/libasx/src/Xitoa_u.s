@@ -20,7 +20,7 @@
 	.global	Xitoa_u
 Xitoa_u:
 	testq	%rdi, %rdi
-	jz	.Linvalid_ptr
+	jz	.Lerr_invalid_ptr
 	#
 	# For returning *dest-original
 	#
@@ -69,7 +69,7 @@ Xitoa_u:
 	#
 	popq	%rax
 	ret
-.Linvalid_ptr:
+.Lerr_invalid_ptr:
 	movq	$-1, %rax
 	ret
 	.size	Xitoa_u, . - Xitoa_u

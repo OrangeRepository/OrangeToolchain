@@ -33,7 +33,7 @@ Xpow:
 .Lpow_loop:
 	mulq	%r8
 	#
-	jo	.Lpow_overflow
+	jc	.Lpow_overflow
 	#
 	decl	%ecx
 	jnz	.Lpow_loop
