@@ -2,7 +2,7 @@
 	.section	.text,"ax",@progbits
 #############################################
 #
-#  FUNCTION : read - reads into *dest
+#  FUNCTION : Xread - reads into *dest
 #  INPUT    : %RDI - $FD
 #             %RSI - *dest
 #             %RDX - $len
@@ -14,7 +14,7 @@
 	.global	Xread
 	.type	Xread, @function
 Xread:
-	movq	$SYS_READ, %rax
+	movl	$SYS_READ, %eax
 	syscall
 	ret
 	.size	Xread, . - Xread

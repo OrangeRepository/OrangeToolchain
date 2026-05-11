@@ -2,7 +2,7 @@
 	.equ	SYS_NANOSLEEP, 35
 #############################################
 #
-#  FUNCTION : nanosleep - high-precision
+#  FUNCTION : Xnanosleep - high-precision
 #             sleep function
 #  INPUT    : %RDI - timespec *req
 #             %RSI - timespec *rem
@@ -14,7 +14,7 @@
 	.global	Xnanosleep
 	.type	Xnanosleep, @function
 Xnanosleep:
-	movq	$SYS_NANOSLEEP, %rax
+	movl	$SYS_NANOSLEEP, %eax
 	syscall
 	ret
 	.size	Xnanosleep, . - Xnanosleep

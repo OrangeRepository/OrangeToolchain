@@ -2,7 +2,7 @@
 	.equ	SYS_CLOSE, 3
 #############################################
 #
-#  FUNCTION : close - closes a file
+#  FUNCTION : Xclose - closes a file
 #  INPUT    : %RDI - $FD
 #  OUTPUT   : none
 #  DESTROYS : %RAX, %RCX, %R11
@@ -12,7 +12,7 @@
 	.global	Xclose
 	.type	Xclose, @function
 Xclose:
-	movq	$SYS_CLOSE, %rax
+	movl	$SYS_CLOSE, %eax
 	syscall
 	ret
 	.size	Xclose, . - Xclose

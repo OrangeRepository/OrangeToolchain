@@ -1,7 +1,7 @@
 # ====================================================
 # ==== Written by ==== OrangeCore ==== Since 2026 ====
 # ====================================================
-#       Add some color to your world!
+#       Add some colors into your world!
 # ====================================================
 # ========== THERE'S NO DOCUMENTATION BELOW ==========
 # ====================================================
@@ -10,7 +10,7 @@
 	.section	.text,"ax",@progbits
 #############################################
 #
-#  FUNCTION : ins_ansi_color
+#  FUNCTION : Xins_ansi_color
 #  INPUT    : %RDI - *dest
 #  OUTPUT   : none
 #  DESTROYS : %RDI
@@ -29,7 +29,7 @@ Xins_ansi_black:
 
 #############################################
 #
-#  FUNCTION : ins_ansi_red
+#  FUNCTION : Xins_ansi_red
 #  INPUT    : %RDI - *dest
 #  OUTPUT   : none
 #  DESTROYS : %RDI
@@ -48,7 +48,7 @@ Xins_ansi_red:
 
 #############################################
 #
-#  FUNCTION : ins_ansi_green
+#  FUNCTION : Xins_ansi_green
 #  INPUT    : %RDI - *dest
 #  OUTPUT   : none
 #  DESTROYS : %RDI
@@ -67,7 +67,7 @@ Xins_ansi_green:
 
 #############################################
 #
-#  FUNCTION : ins_ansi_yellow
+#  FUNCTION : Xins_ansi_yellow
 #  INPUT    : %RDI - *dest
 #  OUTPUT   : none
 #  DESTROYS : %RDI
@@ -86,7 +86,7 @@ Xins_ansi_yellow:
 
 #############################################
 #
-#  FUNCTION : ins_ansi_blue
+#  FUNCTION : Xins_ansi_blue
 #  INPUT    : %RDI - *dest
 #  OUTPUT   : none
 #  DESTROYS : %RDI
@@ -105,7 +105,7 @@ Xins_ansi_blue:
 
 #############################################
 #
-#  FUNCTION : ins_ansi_purple
+#  FUNCTION : Xins_ansi_purple
 #  INPUT    : %RDI - *dest
 #  OUTPUT   : none
 #  DESTROYS : %RDI
@@ -124,7 +124,7 @@ Xins_ansi_purple:
 
 #############################################
 #
-#  FUNCTION : ins_ansi_cyan
+#  FUNCTION : Xins_ansi_cyan
 #  INPUT    : %RDI - *dest
 #  OUTPUT   : none
 #  DESTROYS : %RDI
@@ -143,7 +143,7 @@ Xins_ansi_cyan:
 
 #############################################
 #
-#  FUNCTION : ins_ansi_white
+#  FUNCTION : Xins_ansi_white
 #  INPUT    : %RDI - *dest
 #  OUTPUT   : none
 #  DESTROYS : %RDI
@@ -162,17 +162,17 @@ Xins_ansi_white:
 
 #############################################
 #
-#  FUNCTION : ins_ansi_reset
+#  FUNCTION : Xins_ansi_reset
 #  INPUT    : %RDI - *dest
 #  OUTPUT   : none
 #  DESTROYS : %RDI
 #  CALLS    : none
 #
 	.p2align 4
-	.global	ins_ansi_reset
-	.type	ins_ansi_reset, @function
-ins_ansi_reset:
+	.global	Xins_ansi_reset
+	.type	Xins_ansi_reset, @function
+Xins_ansi_reset:
 	movl	$0x6D305B1B, (%rdi)
 	addq	$4, %rdi
 	ret
-	.size	ins_ansi_reset, . - ins_ansi_reset
+	.size	Xins_ansi_reset, . - Xins_ansi_reset

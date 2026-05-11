@@ -2,7 +2,7 @@
 	.section	.text,"ax",@progbits
 #############################################
 #
-#  FUNCTION : creat - creates a file
+#  FUNCTION : Xcreat - creates a file
 #  INPUT    : %RDI - *filename
 #             %RSI - $mode
 #  OUTPUT   : none
@@ -13,7 +13,7 @@
 	.global	Xcreat
 	.type	Xcreat, @function
 Xcreat:
-	movq	$SYS_CREAT, %rax
+	movl	$SYS_CREAT, %eax
 	syscall
 	ret
 	.size	Xcreat, . - Xcreat

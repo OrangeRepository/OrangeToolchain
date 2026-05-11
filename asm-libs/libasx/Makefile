@@ -13,6 +13,7 @@ OBJECTS := $(patsubst src/%.s, obj/%.o, $(SOURCES))
 
 
 $(TARGET) : $(OBJECTS)
+	rm -f $(TARGET)
 	$(AR) $(ARFLAGS) $(TARGET) $(OBJECTS)
 
 obj/%.o : src/%.s

@@ -1,7 +1,7 @@
 	.section	.text,"ax",@progbits
 #############################################
 #
-#  FUNCTION : memcpy - copies one
+#  FUNCTION : Xmemcpy - copies one
 #             memory address into
 #             another memory address
 #  INPUT    : %RDI - *dest

@@ -2,7 +2,7 @@
 	.equ	SYS_EXIT, 60
 #############################################
 #
-#  FUNCTION : exit - exits the program
+#  FUNCTION : Xexit - exits the program
 #  INPUT    : %RDI - $exit-code
 #  OUTPUT   : none
 #  DESTROYS : none
@@ -12,6 +12,6 @@
 	.global	Xexit
 	.type	Xexit, @function
 Xexit:
-	movq	$SYS_EXIT, %rax
+	movl	$SYS_EXIT, %eax
 	syscall
 	.size	Xexit, . - Xexit

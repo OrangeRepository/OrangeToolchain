@@ -2,7 +2,7 @@
 	.section	.text,"ax",@progbits
 #############################################
 #
-#  FUNCTION : open - opens a file
+#  FUNCTION : Xopen - opens a file
 #  INPUT    : %RDI - *filename
 #             %RSI - $flags
 #             %RDX - $mode
@@ -14,11 +14,13 @@
 	.global	Xopen
 	.type	Xopen, @function
 Xopen:
-	movq	$SYS_OPEN, %rax
+	movl	$SYS_OPEN, %eax
 	syscall
+	#
 	pushq	%rax
-	cmpq	$0, %rax
+	cmpl	$0, %eax
 	jl	.Lopen_err
+	#
 	popq	%rax
 	ret
 .Lopen_err:

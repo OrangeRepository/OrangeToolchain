@@ -1,7 +1,7 @@
 	.section	.text,"ax",@progbits
 #############################################
 #
-#  FUNCTION : strlen - get string length
+#  FUNCTION : Xstrlen - get string length
 #  INPUT    : %RDI - *null-terminated-string
 #  OUTPUT   : %RAX - $str-len-no-null
 #  DESTROYS : %RAX, %RCX,
@@ -14,8 +14,9 @@
 Xstrlen:
 	movq	%rdi, %rdx
 	movq	$-1, %rcx
-	xorq	%rax, %rax
+	xorl	%eax, %eax
 	repne scasb
+	#
 	decq	%rdi
 	subq	%rdx, %rdi
 	movq	%rdi, %rax

@@ -1,7 +1,7 @@
 	.section	.text,"ax",@progbits
 #############################################
 #
-#  FUNCTION : memcmp - compares two
+#  FUNCTION : Xmemcmp - compares two
 #             memory addresses, and
 #             returns -1 if they're
 #             not equal
@@ -24,9 +24,9 @@ Xmemcmp:
 	movq	$-1, %rax
 	ret
 .Lmemcmp_equal:
-	xorq	%rax, %rax
+	xorl	%eax, %eax
 	ret
 .Lmemcmp_greater:
-	movq	$1, %rax
+	movl	$1, %eax
 	ret
 	.size	Xmemcmp, . - Xmemcmp

@@ -1,0 +1,193 @@
+##
+## WARNING!
+## HISTORICAL WORTH ONLY. DO NOT TRY TO LAUNCH,
+## COMPILE OR INTERACT WITH THIS. ESPECIALLY TO.
+##
+bits 64
+default rel
+section .rodata
+	; constants
+	SYS_read			equ 0
+	SYS_write			equ 1
+	SYS_exit			equ 60
+	; FD
+	STDIN				equ 0
+	STDOUT				equ 1
+	; memory
+	BUFFER_SIZE			equ 256
+	; other
+	NULL_TERM			equ 0x00
+	NEWLINE				equ 0x0A
+	SPACE				equ 0x20
+	MY_IQ				equ 00000000b
+	; text
+	prompt				db "Enter an example: "
+	prompt_len			equ $-prompt
+	error_msg			db "Incorrect input", NEWLINE, NULL_TERM
+	error_len			equ $-error_msg
+	result_msg			db "Result: "
+	res_msg_len			equ $-result_msg
+section .bss
+	input_buffer:			resb BUFFER_SIZE
+section .text
+	global _start
+_start:
+	; output the prompt
+	mov rax,			SYS_write
+	mov rdi,			STDOUT
+	lea rsi,			prompt
+	mov rdx,			prompt_len
+	syscall
+	; read the input buffer
+	mov rax,			SYS_read
+	mov rdi,			STDIN
+	lea rsi,			input_buffer
+	mov rdx,			BUFFER_SIZE-1	; 1 is saved for null-terminator
+	syscall
+	lea r8,				input_buffer	; load input_buffer address to work with it further
+	xor rax,			rax		; clean after syscalls
+.digit_loop:
+	mov bl,				byte [r8]	; load content to %bl from %r8 address
+	cmp bl,				SPACE		; SPACE checking
+	je .token_loop						; jump if it matches
+	sub bl,				'0'		; digitize from ASCII
+;; FIXME: this cannot be fixed.
+	mov rax,			10
+	movzx rbx,			bl
+	mul rbx
+	add rax,			rbx
+	inc r8
+	jmp .digit_loop
+.token_loop:
+	mov r12,			rax		; save final result from %rax to %r12 (first number variable)
+	xor rax,			rax		; clear %rax after saving it in %r12
+	inc r8						; instantly increase the address to skip spacebar checking
+	mov rbx,			[r8]		; load value to %bl from the address, stored in %r8
+	mov rax,			'+'		; load addition token to %al for further checking
+	cmp rbx,			rax
+	je .save_add_token
+	mov rax,			'-'
+	cmp rbx,			rax
+	je .save_sub_token
+	mov rax,			'*'
+	cmp rbx,			rax
+	je .save_mul_token
+	mov rax,			'/'
+	cmp rbx,			rax
+	je .save_div_token
+	jmp .incorrect_input
+.save_add_token:
+	mov r13,			rax
+	jmp .digit_loop2
+.save_sub_token:
+	mov r13,			rax
+	jmp .digit_loop2
+.save_mul_token:
+	mov r13,			rax
+	jmp .digit_loop2
+.save_div_token:
+	mov r13,			rax
+.digit_loop2:
+	mov rbx,			[r8]		; load value to %bl from the address, stored in %r8
+	cmp rbx,			NEWLINE		; '\n' checking
+	je .check_token
+	sub rbx,			'0'
+	mul rax,			10
+	add rax,			rbx
+	inc r8
+	jmp .digit_loop2
+.check_token:
+	cmp r13,			'+'
+	jmp .addition
+	cmp r13,			'-'
+	jmp .subtraction
+	cmp r13,			'*'
+	jmp .multiplication
+	cmp r13,			'/'
+	jmp .division
+.addition:
+	add r12,			r14
+	jmp .final_write
+.subtraction:
+	sub r12,			r14
+	jmp .final_write
+.multiplication:
+	mov rax,			r12
+	xor rdx,			rdx
+	mov rbx,			r12
+	div rbx,
+	mov r14,			rax
+	jmp .final_write
+.division:
+	mov rax,			r14
+	xor rdx,			rdx
+	mov rbx,			r12
+	div rbx
+	mov r14,			rax
+	jmp .final_write
+;; Uhm... drugs?
+.count_string:
+	xor bl,				bl
+	lea r8,				[result_msg + 8] ; such a realization...
+	cmp r14,			10
+	mov rcx,			2
+	jge .number_to_ASCII
+	cmp r14,			100
+	mov rcx,			3
+	jge .number_to_ASCII
+	cmp r14,			1000
+	mov rcx,			4
+	jge .number_to_ASCII
+	cmp r14,			10000
+	mov rcx,			5
+	jge .number_to_ASCII
+	cmp r14,			100000
+	mov rcx,			6
+	jge .number_to_ASCII
+	cmp r14,			1000000
+	mov rcx,			7
+	jge .number_to_ASCII
+	cmp r14,			10000000
+	mov rcx,			8
+	jge .number_to_ASCII
+	cmp r14,			100000000
+	mov rcx,			9
+	jge .number_to_ASCII
+	cmp r14,			1000000000
+	mov rcx,			10
+	jge .number_to_ASCII
+;; FIXME: help me
+.number_to_ASCII:
+	mov rbx,			r8		; %r8 = address of [result_msg + &8] (addition by $8 for the reason)
+	mov rdi,			r14		; store operation result tp %rdi
+	div rbx						; divide it by 10
+	mov r8,				rax
+	inc r8
+	mov r8,				rax
+	dec rcx
+	jnz .number_to_ASCII
+;; FIXME: output is fucked
+.final_write:
+	mov rax,			SYS_write
+	mov rdi,			STDOUT
+	lea rsi,			result_msg
+	mov rdx,			res_msg_len
+	syscall
+;; the sole right thing you can do
+.exit:
+	mov rax,			SYS_exit
+	xor rdi,			rdi
+	syscall
+.incorrect_input:
+	mov rax,			SYS_write
+	mov rdi,			STDOUT
+	lea rsi,			error_msg
+	mov rdx,			error_len
+	syscall
+;; bsod
+.error_exit:
+	mov rax,			SYS_exit
+	mov rdi,			1
+	syscall
+
+;; Easter egg? Nah, just one of mine, sry.

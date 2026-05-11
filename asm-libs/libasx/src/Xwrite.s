@@ -2,7 +2,7 @@
 	.section	.text,"ax",@progbits
 #############################################
 #
-#  FUNCTION : write - writes into $FD
+#  FUNCTION : Xwrite - writes into $FD
 #  INPUT    : %RDI - $FD
 #             %RSI - *src
 #             %RDX - $len
@@ -14,7 +14,7 @@
 	.global	Xwrite
 	.type	Xwrite, @function
 Xwrite:
-	movq	$SYS_WRITE, %rax
+	movl	$SYS_WRITE, %eax
 	syscall
 	ret
 	.size	Xwrite, . - Xwrite

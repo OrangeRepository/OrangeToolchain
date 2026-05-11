@@ -1,7 +1,7 @@
 	.section	.text,"ax",@progbits
 #############################################
 #
-#  FUNCTION : memset - memory set.
+#  FUNCTION : Xmemset - memory set.
 #             fills specified memory
 #             region with a byte value
 #  INPUT    : %RDI - *dest
@@ -16,9 +16,11 @@
 	.type	Xmemset, @function
 Xmemset:
 	pushq	%rdi
+	#
 	movb	%sil, %al
 	movq	%rdx, %rcx
 	rep stosb
+	#
 	popq	%rax
 	ret
 	.size	Xmemset, . - Xmemset

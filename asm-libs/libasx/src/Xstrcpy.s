@@ -1,7 +1,7 @@
 	.section	.text,"ax",@progbits
 #############################################
 # 
-#  FUNCTION : strcpy - string copy
+#  FUNCTION : Xstrcpy - string copy
 #  INPUT    : %RDI - *dest
 #             %RSI - *src
 #  OUTPUT   : %RAX - *dest (original)
@@ -13,14 +13,19 @@
 	.type	Xstrcpy, @function
 Xstrcpy:
 	pushq	%rdi
-	xorq	%rax, %rax
+	#
+	xorl	%eax, %eax
 .Lstrcpy_loop:
 	movb	(%rsi), %al
+	#
 	cmpb	$0, %al
 	je	.Lstrcpy_done
+	#
 	movb	%al, (%rdi)
+	#
 	incq	%rsi
 	incq	%rdi
+	#
 	jmp	.Lstrcpy_loop
 .Lstrcpy_done:
 	popq	%rax

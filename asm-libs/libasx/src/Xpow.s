@@ -1,7 +1,7 @@
 	.section	.text,"ax",@progbits
 #############################################
 #
-#  FUNCTION : pow - calculates the value
+#  FUNCTION : Xpow - calculates the value
 #             of base raised to exponent
 #  INPUT    : %RDI - $base
 #             %RSI - $exponent
@@ -14,22 +14,36 @@
 	.global	Xpow
 	.type	Xpow, @function
 Xpow:
-	testq	%rsi, %rsi
+	testl	%esi, %esi
 	jz	.Lpow_zero
-	movq	%rdi, %rax
-	cmpq	$1, %rsi
+	#
+	movl	%edi, %eax
+	#
+	cmpl	$1, %esi
 	je	.Lpow_done
-	movq	%rdi, %r8
-	movq	%rsi, %rcx
-	decq	%rcx
+	#
+	movl	%edi, %r8d
+	movl	%esi, %ecx
+	#
+	# Without this decrement,
+	# the loop would perform
+	# one extra iteration
+	#
+	decl	%ecx
 .Lpow_loop:
 	mulq	%r8
-	decq	%rcx
+	#
+	jo	.Lpow_overflow
+	#
+	decl	%ecx
 	jnz	.Lpow_loop
+	ret
+.Lpow_zero:
+	movl	$1, %eax
 	ret
 .Lpow_done:
 	ret
-.Lpow_zero:
-	movq	$1, %rax
+.Lpow_overflow:
+	movq	$-1, %rax
 	ret
 	.size	Xpow, . - Xpow

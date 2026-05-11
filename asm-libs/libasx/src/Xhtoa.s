@@ -1,12 +1,12 @@
 	.section	.text,"ax",@progbits
 #############################################
 #
-#  FUNCTION : htoa - hex to ASCII
+#  FUNCTION : Xhtoa - hex to ASCII
 #  INPUT    : %RDI - *dest
 #             %RSI - $src
 #             %RDX - $hex-digits-number
 #  OUTPUT   : %RAX - *dest-original
-#             ON-ERROR: %RAX - $return-code
+#             on-error: %RAX - $return-code
 #  DESTROYS : %RAX, %RDX, %RCX,
 #             %RSI, %RDI
 #  CALLS    : none
@@ -15,14 +15,14 @@
 	.global	Xhtoa
 	.type	Xhtoa, @function
 Xhtoa:
-	testq	%rdx, %rdx
+	testl	%edx, %edx
 	jz	.Lhtoa_zero_err
 	cmpl	$16, %edx
 	ja	.Lhtoa_len_err
 	pushq	%rdi
 	pushq	%rbx
 	movl	%edx, %ecx
-	movq	%rcx, %rbx
+	movl	%ecx, %ebx
 	movq	%rsi, %rax
 	xorl	%edx, %edx
 	movw	$0x7830, (%rdi)
