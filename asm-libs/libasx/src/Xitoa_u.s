@@ -60,11 +60,6 @@ Xitoa_u:
 	decl	%ecx
 	jnz	.Lpop_loop
 	#
-	# Null-terminating *dest
-	#
-	movb	$0, (%rdi)
-	incq	%rdi
-	#
 	# Returning *dest-original
 	#
 	popq	%rax

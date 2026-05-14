@@ -35,6 +35,22 @@
 		popq	%rdx; popq	%rcx;
 		popq	%rbx; popq	%rax;
 	.endm
+	.macro SYSCALL_PUSH
+		pushq	%rax
+		pushq	%rdi
+		pushq	%rsi
+		pushq	%rdx
+		pushq	%rcx
+		pushq	%r11
+	.endm
+	.macro SYSCALL_POP
+		popq	%r11
+		popq	%rcx
+		popq	%rdx
+		popq	%rsi
+		popq	%rdi
+		popq	%rax
+	.endm
 
 
 #############################################
@@ -532,22 +548,12 @@
 	.global sfr_dbpoint
 	.type	sfr_dbpoint, @function
 sfr_dbpoint:
-	pushq	%rax
-	pushq	%rdi
-	pushq	%rsi
-	pushq	%rdx
-	pushq	%rcx
-	pushq	%r11
+	SYSCALL_PUSH
 	movq	$1, %rdi
 	leaq	.LCdbpoint(%rip), %rsi
-	movq	$.LCDBPOINT_LEN, %rdx
+	movq	$DBPOINT_LEN, %rdx
 	call	.Lwrite
-	popq	%r11
-	popq	%rcx
-	popq	%rdx
-	popq	%rsi
-	popq	%rdi
-	popq	%rax
+	SYSCALL_POP
 	ret
 	.size	sfr_dbpoint, . - sfr_dbpoint
 
@@ -619,7 +625,7 @@ sfr_reg_dump:
 	leaq	.LCreg_pfxs(%rip), %r14
 	#
 	leaq	.LCdump_header(%rip), %rsi
-	movq	$.LCDUMP_HEADER_LEN, %rdx
+	movq	$DUMP_HEADER_LEN, %rdx
 	call	.Lmemcpy
 	#
 	call	.Ldraw_row
@@ -643,7 +649,7 @@ sfr_reg_dump:
 	call	.Ldraw_row
 	#
 	leaq	.LCdump_footer(%rip), %rsi
-	movq	$.LCDUMP_FOOTER_LEN, %rdx
+	movq	$DUMP_FOOTER_LEN, %rdx
 	call	.Lmemcpy
 	#
 	call	.Lins_color_reset
@@ -677,6 +683,31 @@ sfr_mem_inspect:
 	ret
 	.size	sfr_mem_inspect, . - sfr_mem_inspect
 
+	.p2align 4
+	.global	sfr_seg_inspect
+	.type	sfr_seg_inspect, @function
+sfr_seg_inspect:
+	SYSCALL_PUSH
+	#
+	movl	$STDOUT, %edi
+	leaq	.LCseg_inspect_start(%rip), %rsi
+	movl	$SEG_INSPECT_START_LEN, %edx
+	call	.Lwrite
+	#
+	SYSCALL_POP
+	#
+	movq	$0, (%rdi)
+	#
+	SYSCALL_PUSH
+	#
+	movl	$STDOUT, %edi
+	leaq	.LCseg_inspect_end(%rip), %rsi
+	movl	$SEG_INSPECT_END_LEN, %edx
+	call	.Lwrite
+	#
+	SYSCALL_POP
+	ret
+	.size	sfr_seg_inspect, . - sfr_seg_inspect
 
 #############################################
 #                                           #
@@ -705,6 +736,12 @@ sfr_mem_inspect:
 #                                           #
 #############################################
 	.section	.rodata.str1.1,"aMS",@progbits,1
+	.type	.LCdbpoint, @object
+.LCdbpoint:
+	.ascii	"\033[33m[Suffer] Point was reached!\033[0m\n"
+	.equ	DBPOINT_LEN, . - .LCdbpoint
+	.size	.LCdbpoint, DBPOINT_LEN
+
 .LCdump_header:
 	.ascii	"\033[33m"
 	.ascii	"+-------------------------------------------------+\n"
@@ -712,7 +749,12 @@ sfr_mem_inspect:
 	.ascii	"+-----+--------------------+----------------------+\n"
 	.ascii	"|\033[35m REG\033[33m |\033[36m HEXADECIMAL       \033[33m |\033[31m DECIMAL             \033[33m |\n"
 	.ascii	"+-----+--------------------+----------------------+\n"
-	.equ	.LCDUMP_HEADER_LEN, . - .LCdump_header
+	.equ	DUMP_HEADER_LEN, . - .LCdump_header
+
+	.type	.LCreg_pfxs, @object
+.LCreg_pfxs:
+	.ascii	"| RAX | | RBX | | RCX | | RDX | | RSI | | RDI | | RSP | | RBP | | R8  | | R9  | | R10 | | R11 | | R12 | | R13 | | R14 | | R15 | "
+	.size	.LCreg_pfxs, . - .LCreg_pfxs
 
 	.type	.LChex_table, @object
 .LChex_table:
@@ -721,15 +763,11 @@ sfr_mem_inspect:
 
 .LCdump_footer:
 	.ascii	"+-----+--------------------+----------------------+\n"
-	.equ	.LCDUMP_FOOTER_LEN, . - .LCdump_footer
+	.equ	DUMP_FOOTER_LEN, . - .LCdump_footer
 
-	.type	.LCreg_pfxs, @object
-.LCreg_pfxs:
-	.ascii	"| RAX | | RBX | | RCX | | RDX | | RSI | | RDI | | RSP | | RBP | | R8  | | R9  | | R10 | | R11 | | R12 | | R13 | | R14 | | R15 | "
-	.size	.LCreg_pfxs, . - .LCreg_pfxs
-
-	.type	.LCdbpoint, @object
-.LCdbpoint:
-	.ascii	"\033[33m[Suffer] Point was reached!\033[0m\n"
-	.equ	.LCDBPOINT_LEN, . - .LCdbpoint
-	.size	.LCdbpoint, .LCDBPOINT_LEN
+.LCseg_inspect_start:
+	.ascii	"\033[33m[Suffer] Checking for a segfault...\033[0m\n"
+	.equ	SEG_INSPECT_START_LEN, . - .LCseg_inspect_start
+.LCseg_inspect_end:
+	.ascii	"\033[33m[Suffer] No segfault, the specified memory is correct!\033[0m\n"
+	.equ	SEG_INSPECT_END_LEN, . - .LCseg_inspect_end

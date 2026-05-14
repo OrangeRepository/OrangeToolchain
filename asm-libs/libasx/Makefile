@@ -1,4 +1,4 @@
-TARGET	= libasm.a
+TARGET	= libasx.a
 
 AS	= as
 ASFLAGS	= --64

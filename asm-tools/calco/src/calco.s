@@ -348,7 +348,7 @@ _start:
 	.section	.rodata.str1.1,"aMS",@progbits,1
 .LCcalco_header:
 	.ascii	"\033[33mCalco by OrangeCore.\n"
-	.ascii	"\033[34mType 'q' if you want to quit.\033[0m\n"
+	.ascii	"\033[34m'q' to quit.\033[0m\n"
 	.equ	.LCCALCO_HEADER_LEN, . - .LCcalco_header
 
 .LCprompt:
