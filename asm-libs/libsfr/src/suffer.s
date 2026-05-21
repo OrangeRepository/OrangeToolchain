@@ -557,46 +557,46 @@ sfr_dbpoint:
 	ret
 	.size	sfr_dbpoint, . - sfr_dbpoint
 
-#
-# L
-#
-.Ldraw_row:	# L3
+.Ldraw_row:
+	movb	$' ', (%rdi)
+	incq	%rdi
+	#
 	movq	%r14, %rsi
-	call	.Lins_reg_pfx		# L2
-	call	.Lins_cyan_color	# L1
+	call	.Lins_reg_pfx
+	call	.Lins_cyan_color
 	#
 	pushq	%rdi
 	movq	(%r13), %rdi
-	call	.Lcalculate_hex		# L2
+	call	.Lcalculate_hex
 	popq	%rdi
 	#
 	pushq	%rdi
 	movq	(%r13), %rsi
 	movq	%rax, %rdx
-	call	.Lhtoa			# L1
+	call	.Lhtoa
 	popq	%rsi
 	addq	$3, %rsi
 	#
 	movq	$16, %rdx
-	call	.Lcalculate_spaces	# L2
+	call	.Lcalculate_spaces
 	#
 	movq	%rax, %rsi
-	call	.Lclose_border		# L2
+	call	.Lclose_border
 	#
-	call	.Lins_red_color		# L1
+	call	.Lins_red_color
 	#
 	pushq	%rdi
 	movq	(%r13), %rsi
-	call	.Litoa			# L1
+	call	.Litoa
 	popq	%rsi
 	#
 	movq	$21, %rdx
-	call	.Lcalculate_spaces	# L2
+	call	.Lcalculate_spaces
 	#
 	movq	%rax, %rsi
-	call	.Lclose_last_border	# L2
+	call	.Lclose_last_border
 	#
-	call	.Lins_newline		# L2
+	call	.Lins_newline
 	#
 	addq	$8, %r14
 	addq	$8, %r13
@@ -744,11 +744,11 @@ sfr_seg_inspect:
 
 .LCdump_header:
 	.ascii	"\033[33m"
-	.ascii	"+-------------------------------------------------+\n"
-	.ascii	"| Suffer ========== OrangeCore ======== Regs dump |\n"
-	.ascii	"+-----+--------------------+----------------------+\n"
-	.ascii	"|\033[35m REG\033[33m |\033[36m HEXADECIMAL       \033[33m |\033[31m DECIMAL             \033[33m |\n"
-	.ascii	"+-----+--------------------+----------------------+\n"
+	.ascii	"+---------------------------------------------------+\n"
+	.ascii	"| Suffer =========== OrangeCore ========== Reg dump |\n"
+	.ascii	"+-----+----------------------+----------------------+\n"
+	.ascii	"|\033[35m REG\033[33m |\033[36m HEXADECIMAL         \033[33m |\033[31m DECIMAL             \033[33m |\n"
+	.ascii	"+-----+----------------------+----------------------+\n"
 	.equ	DUMP_HEADER_LEN, . - .LCdump_header
 
 	.type	.LCreg_pfxs, @object
@@ -762,7 +762,9 @@ sfr_seg_inspect:
 	.size	.LChex_table, . - .LChex_table
 
 .LCdump_footer:
-	.ascii	"+-----+--------------------+----------------------+\n"
+	.ascii	"+-----+----------------------+----------------------+\n"
+	.ascii	"|\033[35m REG\033[33m |\033[36m HEXADECIMAL         \033[33m |\033[31m DECIMAL             \033[33m |\n"
+	.ascii	"+-----+----------------------+----------------------+\n"
 	.equ	DUMP_FOOTER_LEN, . - .LCdump_footer
 
 .LCseg_inspect_start:
